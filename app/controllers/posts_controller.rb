@@ -13,7 +13,9 @@ class PostsController < ApplicationController
   end
 
   def create
+
     @post = Post.create(post_params)
+    @post.author=Author.find_or_create_by(name:params[:post][:author])
     @post.save
     redirect_to post_path(@post)
   end
@@ -28,7 +30,11 @@ class PostsController < ApplicationController
 
   def post_data
     post = Post.find(params[:id])
-    render json: PostSerializer.serialize(post)
+    #render json: PostSerializer.serialize(post)
+     #render json: post.to_json
+     #render json: post.to_json(include: :author)
+     render json: post.to_json(only: [:title, :description, :id],
+                              include: [ author: { only: [:name]}])
   end
 
 private
